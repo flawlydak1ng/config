@@ -7,7 +7,55 @@
 ## Установка и запуск
 
 Требуется Python 3.9 или новее. Для первоначальной установки зависимости нужен доступ к PyPI.
-На macOS и Linux из корня проекта выполните:
+### MacBook Air M4 (macOS, Apple Silicon)
+
+Откройте «Терминал» через Spotlight (⌘ + пробел). Проверьте инструменты:
+
+```sh
+uname -m
+python3 --version
+make --version
+```
+
+В обычном сеансе на M4 первая команда выводит `arm64`. Если macOS предложит
+установить инструменты разработчика, завершите установку. Их также можно установить
+командой `xcode-select --install`. Если Python отсутствует или его версия ниже 3.9,
+установите Python 3.9+ для macOS
+с [python.org](https://www.python.org/downloads/macos/) и заново откройте «Терминал».
+
+Скачайте репозиторий и перейдите в каталог проекта:
+
+```sh
+git clone https://github.com/flawlydak1ng/config.git
+cd config
+```
+
+Если проект уже распакован из ZIP, откройте папку с `Makefile` в Finder.
+В «Терминале» введите `cd ` с пробелом, перетащите туда эту папку и нажмите Return.
+Так можно перейти в проект, даже если в пути есть пробелы.
+
+При первом запуске создайте виртуальное окружение и установите зависимость:
+
+```sh
+make setup
+```
+
+Запустите тесты, затем переведите конфигурацию киностудии:
+
+```sh
+make test
+mkdir -p out
+cat examples/studio.cfg
+make run INPUT=examples/studio.cfg OUTPUT=out/studio.xml
+cat out/studio.xml
+```
+
+Ожидаемый итог тестов — `OK`. В XML найдите константу `average` со значением `20`:
+общая длительность составляет 40 секунд, а массив содержит две сцены.
+При последующих запусках в этой папке достаточно команд `make test` и `make run`.
+Make использует Python из локального окружения `.venv` автоматически.
+
+### Linux
 
 ```sh
 make setup
@@ -24,7 +72,7 @@ PYTHONPATH=src .venv/bin/python -m configxml -i examples/library.cfg -o out/libr
 PYTHONPATH=src .venv/bin/python -m configxml --help
 ```
 
-На Windows (PowerShell):
+### Windows (PowerShell)
 
 ```powershell
 py -3 -m venv .venv
