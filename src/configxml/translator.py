@@ -3,7 +3,7 @@
 import operator
 import re
 from decimal import Context, Decimal, DecimalException, localcontext
-from xml.etree import ElementTree as ET
+from xml.etree import ElementTree as etree
 
 import pyparsing as pp
 
@@ -69,13 +69,13 @@ def evaluate(item, names, source):
 def append_value(parent, value):
     """Записать значение с явным XML-тегом типа."""
     if isinstance(value, list):
-        array = ET.SubElement(parent, "list")
+        array = etree.SubElement(parent, "list")
         for item in value:
             append_value(array, item)
     elif isinstance(value, Decimal):
-        ET.SubElement(parent, "number").text = str(value)
+        etree.SubElement(parent, "number").text = str(value)
     else:
-        ET.SubElement(parent, "string").text = value
+        etree.SubElement(parent, "string").text = value
 
 
 def emit(item, root, names, source):
@@ -85,7 +85,7 @@ def emit(item, root, names, source):
         if name in names:
             raise problem(source, item.offset, f"повторное объявление {name}")
         names[name] = evaluate(item_value, names, source)
-        append_value(ET.SubElement(root, "constant", name=name), names[name])
+        append_value(etree.SubElement(root, "constant", name=name), names[name])
     else:
         append_value(root, evaluate(item, names, source))
 
@@ -95,7 +95,7 @@ def translate(source):
     invalid = BAD_XML.search(source)
     if invalid:
         raise problem(source, invalid.start(), "недопустимый символ XML 1.0")
-    root, names = ET.Element("config"), {}
+    root, names = etree.Element("config"), {}
     try:
         with localcontext(Context(prec=PRECISION)):
             for item in GRAMMAR.parse_string(source, parse_all=True):
@@ -104,5 +104,5 @@ def translate(source):
         raise problem(source, exc.loc, "синтаксическая ошибка") from exc
     except RecursionError as exc:
         raise ConfigError("превышена допустимая глубина вложенности") from exc
-    ET.indent(root)
-    return ET.tostring(root, encoding="utf-8", xml_declaration=True) + b"\n"
+    etree.indent(root)
+    return etree.tostring(root, encoding="utf-8", xml_declaration=True) + b"\n"

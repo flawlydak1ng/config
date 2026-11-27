@@ -5,7 +5,7 @@ import sys
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from xml.etree import ElementTree as ET
+from xml.etree import ElementTree as etree
 
 
 class CliTests(unittest.TestCase):
@@ -27,7 +27,7 @@ class CliTests(unittest.TestCase):
         result = self.convert()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout, "")
-        self.assertEqual(ET.parse(self.output).getroot()[0].text,
+        self.assertEqual(etree.parse(self.output).getroot()[0].text,
                          "текст & <xml>")
 
     def test_previous_file_survives_error(self):

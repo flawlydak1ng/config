@@ -2,13 +2,13 @@
 
 import unittest
 from pathlib import Path
-from xml.etree import ElementTree as ET
+from xml.etree import ElementTree as etree
 
 from configxml.translator import ConfigError, translate
 
 
 def xml(source):
-    return ET.fromstring(translate(source))
+    return etree.fromstring(translate(source))
 
 
 class TranslatorTests(unittest.TestCase):
